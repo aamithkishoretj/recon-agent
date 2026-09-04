@@ -1,0 +1,53 @@
+.candidate-comparison{margin:4px 0 24px;color:var(--text-primary);font-size:14px;line-height:1.55;min-width:0}
+.candidate-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.candidate-eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--primary-light)}
+.candidate-heading h3{font-size:22px;letter-spacing:-.025em;margin:5px 0 0}
+.candidate-withheld{border-left:3px solid var(--warning);background:#dba6400b;padding:14px 18px;margin-bottom:18px;border-radius:0 6px 6px 0}
+.candidate-withheld strong{font-size:13px;color:var(--warning)}
+.candidate-withheld p{margin:6px 0 0;color:var(--text-secondary)}
+.candidate-policy{display:flex;flex-wrap:wrap;gap:12px 24px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.candidate-policy>span{display:flex;flex-direction:column;font-size:12px;color:var(--text-muted)}
+.candidate-policy strong{font-size:14px;font-weight:600;color:var(--text-primary)}
+.candidate-note,.candidate-empty{font-size:13px;color:var(--text-secondary);margin:14px 0}
+.candidate-cards,.candidate-record-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.candidate-cards:has(> :only-child),.candidate-record-columns:has(> :only-child){grid-template-columns:1fr}
+.candidate-summary{padding:18px;border:1px solid #719bea40;border-top:2px solid var(--primary-light);border-radius:6px;background:linear-gradient(140deg,#2864f50d,transparent 75%),var(--bg-surface);min-width:0}
+.candidate-summary label{display:block;font-size:12px;color:var(--text-muted);margin-bottom:6px}
+.candidate-summary select{width:100%;min-width:0;padding:9px 8px;background:var(--bg-card-alt);color:var(--text-primary);border:1px solid var(--border);border-radius:4px;font:inherit;font-size:13px}
+.candidate-score{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;margin:14px 0}
+.candidate-score strong{font-size:32px;line-height:1.2;font-variant-numeric:tabular-nums;font-weight:650}
+.candidate-score span{color:var(--text-muted);font-size:12px}
+.candidate-summary dl{margin:0;font-size:12px}
+.candidate-summary dl>div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px;margin-top:6px}
+.candidate-summary dt{color:var(--text-muted)}
+.candidate-summary dd{margin:0;color:var(--text-primary)}
+.candidate-comparison-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:16px 0;font-size:12px;color:var(--text-secondary)}
+.candidate-comparison-tools p{margin:0;flex:1}
+.candidate-comparison-tools p span{display:block;margin-top:5px}
+.candidate-comparison-tools label{display:flex;align-items:center;gap:8px;flex-shrink:0;cursor:pointer}
+.candidate-comparison-tools input{accent-color:var(--primary);width:16px;height:16px}
+.candidate-table-scroll{overflow-x:auto;border:1px solid var(--border);border-radius:5px}
+.candidate-comparison .candidate-table{table-layout:fixed;width:100%;min-width:440px;border-collapse:collapse;font-size:13px}
+.candidate-table caption{padding:10px 14px;text-align:left;background:#0002;font-size:12px;color:var(--text-muted)}
+.candidate-comparison .candidate-table th,.candidate-comparison .candidate-table td{padding:11px 14px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
+.candidate-comparison .candidate-table thead th{background:var(--bg-surface);font-size:12px;text-transform:none;letter-spacing:0;color:var(--text-primary)}
+.candidate-comparison .candidate-table tbody th{font-weight:400;background:transparent;color:var(--text-secondary);font-size:12px;text-transform:none;letter-spacing:0}
+.candidate-table th:first-child{width:34%}
+.candidate-table td{color:var(--text-primary);font-variant-numeric:tabular-nums}
+.candidate-table tr:last-child>*{border-bottom:0}
+.candidate-row-different{background:#2864f50a}
+.candidate-difference-label{display:block;font-size:10px;color:var(--primary-light);margin-top:3px}
+.candidate-details{margin-top:10px;border:1px solid var(--border);border-radius:5px;overflow:hidden}
+.candidate-details summary{padding:14px 16px;cursor:pointer;font-weight:550;font-size:14px;background:var(--bg-surface)}
+.candidate-details summary span{float:right;color:var(--text-muted);font-size:12px;font-weight:400}
+.candidate-details>p{margin:14px 16px;color:var(--text-secondary);font-size:13px}
+.candidate-details .candidate-table-scroll{border:0;border-radius:0}
+.candidate-details>.candidate-empty{padding:0 16px}
+.candidate-record-columns{padding:16px}
+.candidate-record-columns h4{font-size:14px;margin:0 0 12px}
+.candidate-record-columns strong{color:var(--text-muted);text-transform:capitalize;font-weight:400;font-size:12px}
+.candidate-record-id{display:flex;flex-direction:column;margin:4px 0 14px;gap:4px;font-size:13px}
+.candidate-record-id code{overflow-wrap:anywhere;font-size:11px;color:var(--text-muted)}
+.candidate-guardrail{padding:14px 16px;margin-top:18px;border:1px dashed var(--border);border-radius:5px;font-size:12px;color:var(--text-secondary)}
+.candidate-comparison :is(select,input,summary,[tabindex]):focus-visible{outline:2px solid var(--primary-light);outline-offset:3px}
+@media(max-width:580px){.candidate-heading h3{font-size:20px}.candidate-cards,.candidate-record-columns{grid-template-columns:1fr}.candidate-comparison-tools{align-items:flex-start;flex-direction:column}.candidate-details summary span{display:none}.candidate-summary{padding:14px}.candidate-comparison .candidate-table th,.candidate-comparison .candidate-table td{padding:10px}.candidate-table-scroll{scrollbar-width:thin}}

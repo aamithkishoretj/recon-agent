@@ -1,0 +1,38 @@
+# Python environments and caches
+venv/
+backend/venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# JavaScript dependencies and builds
+frontend/node_modules/
+frontend/dist/
+
+# Local runtime data and generated runs
+backend/data/
+backend/demo-runs/
+backend/showcase-runs/
+backend/import-runs/
+demo-evidence/
+*.db
+*.db-shm
+*.db-wal
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp

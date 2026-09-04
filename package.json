@@ -1,0 +1,12 @@
+{
+  "name": "recon-agent-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "demo": "node scripts/dev.mjs --demo",
+    "showcase": "node scripts/dev.mjs --showcase",
+    "evidence": "node scripts/capture-evidence.mjs",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build"
+  }
+}

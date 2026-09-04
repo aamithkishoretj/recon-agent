@@ -1,0 +1,7 @@
+sqlalchemy
+faker
+google-genai
+pydantic
+fastapi
+httpx2
+uvicorn[standard]
