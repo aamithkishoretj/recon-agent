@@ -127,37 +127,69 @@ Mock mode is visibly labelled and makes no model call. Live mode is optional and
 ## Architecture
 
 ```mermaid
-flowchart LR
-    L[Merchant ledger CSV]
-    S[Razorpay settlement CSV]
-    B[Bank statement CSV]
+flowchart TB
+    subgraph INPUTS["1 · FINANCIAL SOURCES"]
+        direction LR
+        L["Merchant ledger<br/>CSV"]
+        S["Razorpay settlement<br/>CSV"]
+        B["Bank statement<br/>CSV"]
+    end
 
-    L --> I[Validation and normalization]
+    subgraph ENGINE["2 · DETERMINISTIC RECONCILIATION ENGINE"]
+        direction LR
+        I["Validate &<br/>normalise"] --> DB[("Isolated<br/>SQLite run")]
+        DB --> G["Reference graph<br/>grouping"]
+        G --> C["Conservative<br/>candidate recovery"]
+        C --> V{"Financial proof<br/>passes?"}
+    end
+
+    subgraph CONTROL["3 · DECISION & CONTROL"]
+        direction LR
+        M["Automatic<br/>match"]
+        E["Exception<br/>queue"] --> A["Optional AI<br/>hypothesis"]
+        A --> H{"Human<br/>review"}
+        H -->|Approve + reverify| HM["Human-approved<br/>match"]
+        H -->|Reject / insufficient evidence| E
+    end
+
+    subgraph ASSURANCE["4 · AUDIT & MEASUREMENT"]
+        direction LR
+        AU["Append-only<br/>audit trail"]
+        GT["Evaluator-only<br/>ground truth"] -.->|Never exposed to matcher| EV["Exact-set<br/>evaluator"]
+        EV --> D["Dashboard metrics<br/>& accuracy"]
+    end
+
+    L --> I
     S --> I
     B --> I
-    I --> DB[(Isolated SQLite run)]
-
-    DB --> G[Reference graph grouping]
-    G --> C[Conservative candidate recovery]
-    C --> V[Integer-paise verifier]
-
-    V -->|Verified| M[Automatic match]
-    V -->|Unsafe or incomplete| E[Exception queue]
-    E --> A[Optional AI hypothesis]
-    A --> H[Human review gate]
-    H -->|Verified approval| HM[Human-approved match]
-    H -->|Reject or insufficient evidence| E
-
-    M --> AU[Append-only audit events]
+    V -->|Yes| M
+    V -->|No / uncertain| E
+    M --> AU
     E --> AU
     HM --> AU
-
-    GT[Evaluator-only ground truth] -. never read by matcher .-> EV[Exact-set evaluator]
     DB --> EV
     M --> EV
     E --> EV
-    EV --> D[Dashboard metrics and accuracy]
+
+    classDef source fill:#172554,stroke:#60a5fa,color:#eff6ff,stroke-width:1.5px;
+    classDef process fill:#111827,stroke:#64748b,color:#f8fafc,stroke-width:1.5px;
+    classDef decision fill:#312e81,stroke:#a5b4fc,color:#ffffff,stroke-width:2px;
+    classDef success fill:#064e3b,stroke:#34d399,color:#ecfdf5,stroke-width:1.5px;
+    classDef exception fill:#451a03,stroke:#f59e0b,color:#fffbeb,stroke-width:1.5px;
+    classDef ai fill:#3b0764,stroke:#c084fc,color:#faf5ff,stroke-width:1.5px;
+    classDef assurance fill:#0f172a,stroke:#38bdf8,color:#f0f9ff,stroke-width:1.5px;
+
+    class L,S,B source;
+    class I,DB,G,C process;
+    class V,H decision;
+    class M,HM success;
+    class E exception;
+    class A ai;
+    class AU,GT,EV,D assurance;
 ```
+
+The matcher and verifier remain fully deterministic. AI is only an investigation aid after a case has already been
+withheld, and every approval is reverified by the backend before it can change reconciliation state.
 
 ### Trust boundaries
 
