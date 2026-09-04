@@ -26,6 +26,11 @@ if (check.error || check.status !== 0) {
 
 const children = [];
 const showcase = process.argv.includes('--showcase');
+const liveAi = process.argv.includes('--live-ai');
+if (liveAi && !process.env.GEMINI_API_KEY) {
+  console.error('Live AI requires GEMINI_API_KEY in the current environment.');
+  process.exit(1);
+}
 if (process.argv.includes('--demo') || showcase) {
   console.log(showcase
     ? 'Preparing the five-case presentation dataset; existing data will not be changed.'
@@ -45,8 +50,8 @@ if (process.argv.includes('--demo') || showcase) {
   }
   process.env.RECON_DATA_DIR = demo.data_dir;
   process.env.RECON_DB_PATH = demo.db_path;
-  process.env.RECON_AI_MODE = 'mock';
-  console.log(`Verified ${demo.records} synthetic records. AI is forced to MOCK mode.`);
+  process.env.RECON_AI_MODE = liveAi ? 'live' : 'mock';
+  console.log(`Verified ${demo.records} synthetic records. AI mode: ${liveAi ? 'LIVE Gemini' : 'MOCK (no provider call)'}.`);
   if (showcase) console.log(`Showcase manifest: ${demo.demo_cases}`);
   console.log(`Demo report: ${demo.report}`);
 }

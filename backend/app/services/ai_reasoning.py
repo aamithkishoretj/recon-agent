@@ -175,12 +175,15 @@ def call_gemini(payload: dict) -> AIHypothesis:
     client = genai.Client(api_key=api_key)
     prompt = f"{SYSTEM_PROMPT}\n\nEvidence:\n{json.dumps(payload, indent=2)}"
 
-    response = client.models.generate_content(
+    chat = client.chats.create(
         model=os.environ.get("GEMINI_MODEL", "gemini-3.5-flash-lite"),
-        contents=prompt,
-        config={"response_mime_type": "application/json", "response_schema": AIHypothesis},
+        config={
+            "response_mime_type": "application/json",
+            "response_json_schema": AIHypothesis.model_json_schema(),
+        },
     )
-    return response.parsed
+    response = chat.send_message(prompt)
+    return AIHypothesis.model_validate_json(response.text)
 
 
 def call_mock(payload: dict) -> AIHypothesis:
@@ -204,9 +207,40 @@ def call_mock(payload: dict) -> AIHypothesis:
     )
 
 
+def enforce_evidence_guard(payload: dict, hypothesis: AIHypothesis) -> AIHypothesis:
+    """Downgrade provider conclusions that lack an exact numeric mechanism."""
+    if not hypothesis.resolved:
+        return hypothesis
+    if payload.get('case_type') == ExceptionCategory.AMBIGUOUS_CANDIDATE.value:
+        supported = False
+    else:
+        difference = abs(int(payload.get('difference_paise') or 0))
+        category = hypothesis.suggested_category
+        known_amounts = {
+            'fee_error': abs(int(payload.get('known_fee_paise') or 0)),
+            'gst_error': abs(int(payload.get('known_gst_paise') or 0)),
+            'unlinked_refund': abs(int(payload.get('merchant_declared_refunds_paise') or 0)),
+        }
+        supported = (
+            category == 'rounding' and difference <= 5
+        ) or (
+            category in known_amounts and known_amounts[category] > 0
+            and difference == known_amounts[category]
+        )
+    if supported:
+        return hypothesis
+    return AIHypothesis(
+        resolved=False,
+        confidence=min(hypothesis.confidence, 0.3),
+        explanation='Insufficient evidence to explain this discrepancy. The AI suggestion did not pass the deterministic evidence guard.',
+        evidence_fields_used=hypothesis.evidence_fields_used,
+        suggested_category=None,
+    )
+
+
 def get_ai_hypothesis(payload: dict) -> AIHypothesis:
     if os.environ.get('RECON_AI_MODE') != 'mock' and os.environ.get("GEMINI_API_KEY"):
-        return call_gemini(payload)
+        return enforce_evidence_guard(payload, call_gemini(payload))
     return call_mock(payload)
 
 

@@ -466,6 +466,10 @@ recon-agent/
 | `GEMINI_API_KEY` | Enables the optional live provider outside forced mock mode |
 | `GEMINI_MODEL` | Selects the optional live model |
 
+For the five-case presentation with a real provider call, use
+`npm.cmd run showcase:live`. The command requires `GEMINI_API_KEY`; use
+`npm.cmd run showcase` for the fully offline fallback.
+
 Never place API keys in frontend code, committed files, screenshots, or demo recordings.
 
 ## Safety and privacy

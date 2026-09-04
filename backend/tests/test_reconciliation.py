@@ -129,6 +129,32 @@ class ArithmeticTests(unittest.TestCase):
             with self.assertRaises(ValidationError):
                 ai_reasoning.AIHypothesis(resolved=True, confidence=value, explanation='test', evidence_fields_used=[])
 
+    def test_ai_evidence_guard_rejects_unsupported_provider_guess(self):
+        payload = {
+            'case_type': 'amount_discrepancy', 'difference_paise': -25000,
+            'known_fee_paise': 50000, 'known_gst_paise': 8000,
+            'merchant_declared_refunds_paise': 0,
+        }
+        unsafe = ai_reasoning.AIHypothesis(
+            resolved=True, confidence=1, explanation='Assume another fee',
+            evidence_fields_used=['difference_paise'], suggested_category='fee_error')
+        guarded = ai_reasoning.enforce_evidence_guard(payload, unsafe)
+        self.assertFalse(guarded.resolved)
+        self.assertLessEqual(guarded.confidence, .3)
+        self.assertIsNone(guarded.suggested_category)
+
+    def test_ai_evidence_guard_allows_exact_known_mechanism(self):
+        payload = {
+            'case_type': 'amount_discrepancy', 'difference_paise': -8000,
+            'known_fee_paise': 50000, 'known_gst_paise': 8000,
+            'merchant_declared_refunds_paise': 0,
+        }
+        supported = ai_reasoning.AIHypothesis(
+            resolved=True, confidence=.9, explanation='GST-sized difference',
+            evidence_fields_used=['difference_paise', 'known_gst_paise'],
+            suggested_category='gst_error')
+        self.assertIs(ai_reasoning.enforce_evidence_guard(payload, supported), supported)
+
 
 class DatabaseTests(unittest.TestCase):
     def setUp(self):
